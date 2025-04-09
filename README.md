@@ -1,6 +1,6 @@
 <h2>Installation</h2>
 <ol>
-  <li>Download files from git repository.</li>
+  <li>Download or clone repository.</li>
   <li>Use for instance <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm</a> to run local webserver. After installation of Nodejs / npm open folder with downloaded files in terminal and write
 <code>npm install</code>. </li>
   <li>Afterwards use <code>npm run dev</code> in terminal and access webpage via shown url.</li>
