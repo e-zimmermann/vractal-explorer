@@ -6,7 +6,7 @@
   <li>Afterwards use <code>npm run dev</code> in terminal and access webpage via shown url.</li>
 </ol>
 
-<h2>Manual</h2>
+<h2>Instruction Manual</h2>
 <ol>
   <li>Using key <code>y</code> on the keyboard toggles the settings display.</li>
   <li>The slider "mult" controls the iteration schemes.</li>
