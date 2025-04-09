@@ -9,13 +9,17 @@
 <h2>Instruction Manual</h2>
 <ol>
   <li>Using key <code>y</code> on the keyboard toggles the settings display.</li>
-  <li>A small icon on the bottom right corner allows to switch to VR mode (either using an HMD like the Meta Quest and running the local webserver on the device or by using the WebXR browser plugin, which allows to emulate an HMD). In the VR mode the controller button <code>y</code> toggles the settings display.</li>
+  <li>Rotation and translation can be achieved by holding <i>left mouse button</i> or <i>right mouse button</i>, respectively. The <i>mouse wheel</i> offers to zoom in and out.</li>
+  
   <li>The slider <i>mult</i> controls the iteration schemes. There are three schemes available.</li>
   <li>The slider <i>f, g</i> controls the function pair choices. The last option allows to define own functions f and g which get evaluated when selecting <i>Apply</i>.</li>
   <li>The parameter <i>#iterations</i> controls the number of iterations used to determine whether a point belongs to the object or not. The parameter ranges from 0 up to 100.</li>
   <li>The parameter <i>eps</i> controls the initial step size for the raymarching. The parameter ranges from 1.e-5 up to 1.e-2.</li>
   <li>The parameter <i>radius</i> controls the sphere radius. All objects are rendered inside the sphere centered at the origin. The radius is also used for the membership test of a point. The parameter ranges from 0 up to 10.</li>
   <li>The parameter <i>Julia constant</i> provides the option to provide a constant which is used in the iteration scheme 3 called <i>f x g + const</i>.</li>
+  <li><b>VR mode:</b> A small icon on the bottom right corner allows to switch to VR mode (either using an HMD like the Meta Quest and running the local webserver on the device or by using the WebXR browser plugin, which allows to emulate an HMD). </li>
+  <li><b>VR mode:</b> The left controller button <code>y</code> toggles the settings display.</li>
+  <li><b>VR mode:</b> The left controller thumbstick allows forward and backward movement in gaze direction.</li>
 </ol>
 
 <h2>Bug</h2>
