@@ -28,23 +28,39 @@ const createScene = async function () {
     // Following defines snippets for fragment shader injections. The last
     // one can be modified by the used via the GUI.
     const functionPairs = [
+        //
         // 1. f_A, g_A - aka spherical representation 3D
-        // Alternative version:
-        "f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(-sinTheta/cosPhi,0,cosTheta);",
-        //"f = r*r*vec3(-sinPhi*cosTheta, cosPhi*cosTheta, 0); g = vec3(-sinTheta/(cosPhi*cosTheta),0,1);",
+        //
+        // Alternative version: "f = r*r*vec3(-sinPhi*cosTheta, cosPhi*cosTheta, 0); g = vec3(-sinTheta/(cosPhi*cosTheta),0,1);",
+        //
+        // Following includes case handling as denominator carries cosPhi (i.e. cos(2phi) from article).
+        // If it is 0 we return f=(r^2,0,0), g=(0,r^2,0) which gives f x g = (0,0,r^4) and thus directly fails the follow-up divergence condition.
+        "if (cosPhi == 0.) {f = vec3(r*r,0,0); g = vec3(0, r*r, 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(-sinTheta/cosPhi,0,cosTheta);}",
+        //
         // 2. f_A, g_A - aka sphercical representation 3D (inverted 3rd coordinate in g_A)
-        // Alternative version:
-        "f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(sinTheta/cosPhi,0,cosTheta);",
-        //"f = r*r*vec3(-sinPhi*cosTheta, cosPhi*cosTheta, 0); g = vec3(sinTheta/(cosPhi*cosTheta),0,1);",
+        //
+        // Alternative version: "f = r*r*vec3(-sinPhi*cosTheta, cosPhi*cosTheta, 0); g = vec3(sinTheta/(cosPhi*cosTheta),0,1);",
+        //
+        // Following includes case handling as denominator carries cosPhi (i.e. cos(2phi) from article).
+        // If it is 0 we return f=(r^2,0,0), g=(0,r^2,0) which gives f x g = (0,0,r^4) and thus directly fails the follow-up divergence condition.
+        "if (cosPhi == 0.) {f = vec3(r*r,0,0); g = vec3(0, r*r, 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(sinTheta/cosPhi,0,cosTheta);}",
+        //
         // 3. f_B, g_B - aka space filling tunnels
         "f = vec3(1,1,1); g = vec3(cos(p.x), cos(p.y), cos(p.z));",
+        //
         // 4. f_C, g_C - aka swirl
         "f = vec3(p.x*p.x, p.y*p.y, p.z*p.z); g = vec3(cos(p.x), cos(p.y), cos(p.z));",
+        //
         // 5. f_D, g_D - aka force Mandelbrot
         "f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(0,0,1);",
+        //
         // 6. f_E, g_E - aka other forms
         "f = vec3(p.x*p.x*p.y, p.y*p.y, p.z*p.z); g = vec3(1, cos(p.z), 1);",
-        // 7. User defined
+        //
+        // 7. User defined (here without exception handling as this becomes changed by the user)
+        //
+        // Does not include exception handling as this is starting point for user input and
+        // we do not incorporate exception handling for user input yet.
         "f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(-sinTheta/cosPhi,0,cosTheta);",
     ]
 
