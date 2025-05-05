@@ -35,7 +35,7 @@ const createScene = async function () {
         //
         // Following includes case handling as denominator carries cosPhi (i.e. cos(2phi) from article).
         // If it is 0 we return f=(r^2,0,0), g=(0,r^2,0) which gives f x g = (0,0,r^4) and thus directly fails the follow-up divergence condition.
-        "if (cosPhi == 0.) {f = vec3(r*r,0,0); g = vec3(0, r*r, 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(-sinTheta/cosPhi,0,cosTheta);}",
+        "if (cosPhi == 0.) {f = vec3(radiusSq+1.,0,0); g = vec3(0, radiusSq+1., 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(-sinTheta/cosPhi,0,cosTheta);}",
         //
         // 2. f_A, g_A - aka sphercical representation 3D (inverted 3rd coordinate in g_A)
         //
@@ -43,7 +43,7 @@ const createScene = async function () {
         //
         // Following includes case handling as denominator carries cosPhi (i.e. cos(2phi) from article).
         // If it is 0 we return f=(r^2,0,0), g=(0,r^2,0) which gives f x g = (0,0,r^4) and thus directly fails the follow-up divergence condition.
-        "if (cosPhi == 0.) {f = vec3(r*r,0,0); g = vec3(0, r*r, 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(sinTheta/cosPhi,0,cosTheta);}",
+        "if (cosPhi == 0.) {f = vec3(radiusSq+1.,0,0); g = vec3(0, radiusSq+1., 0);} else {f = r*r*vec3(-sinPhi, cosPhi, 0); g = vec3(sinTheta/cosPhi,0,cosTheta);}",
         //
         // 3. f_B, g_B - aka space filling tunnels
         "f = vec3(1,1,1); g = vec3(cos(p.x), cos(p.y), cos(p.z));",
