@@ -1,10 +1,10 @@
 <h2>Description</h2>
-This is the repository corresponding to the <a href="http://archive.bridgesmathart.org/2025/bridges2025-373.html" target="_blank">article</a> published at the Bridges conference 2025. A <strong>demo</strong> can be found on the related <a href="http://e-zimmermann.github.io/demos/vractalExplorer.html" target="_blank">project page</a>.
+This is the repository corresponding to the <a href="http://archive.bridgesmathart.org/2025/bridges2025-373.html">article</a> published at the Bridges conference 2025. A <strong>demo</strong> can be found on the related <a href="http://e-zimmermann.github.io/demos/vractalExplorer.html">project page</a>.
 
 <h2>Installation</h2>
 <ol>
   <li>Download or clone repository.</li>
-  <li>Use for instance <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm" target="_blank">npm</a> to run local webserver. After installation of Nodejs / npm open folder with downloaded files in terminal and write <code>npm install</code>. </li>
+  <li>Use for instance <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm</a> to run local webserver. After installation of Nodejs / npm open folder with downloaded files in terminal and write <code>npm install</code>. </li>
   <li>Afterwards use <code>npm run dev</code> in terminal and access webpage via shown url.</li>
 </ol>
 
