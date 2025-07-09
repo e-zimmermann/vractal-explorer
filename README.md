@@ -1,5 +1,5 @@
 <h2>Description</h2>
-This is the repository corresponding to the <a href="http://archive.bridgesmathart.org/2025/bridges2025-373.html">article</a> published at the Bridges conference 2025. A <strong>demo</strong> can be found on the related <a href="http://e-zimmermann.github.io/demos/vractalExplorer.html">project page</a>.
+This is the repository corresponding to the <a href="http://archive.bridgesmathart.org/2025/bridges2025-373.html">article</a> published at the Bridges conference 2025. A <strong>live demo</strong> can be found on the related <a href="http://e-zimmermann.github.io/demos/vractalExplorer.html">project page</a>.
 
 <h2>Installation</h2>
 <ol>
