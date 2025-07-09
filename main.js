@@ -1,12 +1,3 @@
-import * as BABYLON from "@babylonjs/core";
-import * as GUI from "@babylonjs/gui";
-
-// Enables GLTF/GLB loader for loading controller models from WebXR Input registry
-import "@babylonjs/loaders/glTF";
-
-// Current workaround to manually change function pairs for shader
-const initialFunctionPairChoice = 0;
-
 var canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true); // Generates the BABYLON 3D Engine
 const createScene = async function () {
@@ -21,9 +12,10 @@ const createScene = async function () {
     camera.setTarget = new BABYLON.Vector3(0, 0, 0);
     camera.attachControl(canvas, false);
     camera.onViewMatrixChangedObservable = new BABYLON.Observable();
-    camera.inputs.addMouseWheel();
     camera.wheelPrecision = 500;
     camera.minZ = 0;
+    var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+    light.intensity = 0.7;
 
     // Following defines snippets for fragment shader injections. The last
     // one can be modified by the used via the GUI.
@@ -82,7 +74,7 @@ const createScene = async function () {
         viewPlane.position = camera.getFrontPosition(2); // Places display in front of camera in absolute distance
     })
     // Note, shader material values are initially set in buildGUI method
-    BABYLON.Effect.IncludesShadersStore['functionPair'] = functionPairs[initialFunctionPairChoice];
+    BABYLON.Effect.IncludesShadersStore['functionPair'] = functionPairs[0];
     var shaderMaterial;
     newShader(true);
 
@@ -132,7 +124,11 @@ const createScene = async function () {
                 needAlphaBlending: true,
             },
         );
-        //shaderMaterial.backFaceCulling = false;
+        // FIXME: The following line just checks whether material is ready to render mesh
+        // However this line currently causes the shader to be compiled almost instantly...
+        // Another way could be to use callback/promise in connection with shaderMaterial.onCompiled
+        shaderMaterial.isReady();
+
         viewPlane.material = shaderMaterial;
 
         // Reassign values and update observables
@@ -197,18 +193,18 @@ const createScene = async function () {
         controlMesh.visibility = showControl;
         controlMesh.billboardMode = BABYLON.AbstractMesh.BILLBOARDMODE_ALL;
 
-        let controlMeshTexture = GUI.AdvancedDynamicTexture.CreateForMesh(controlMesh);
-        let controlPanelLeft = new GUI.StackPanel();
+        let controlMeshTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(controlMesh);
+        let controlPanelLeft = new BABYLON.GUI.StackPanel();
         controlPanelLeft.width = "500px";
-        controlPanelLeft.height = "1200px";
+        controlPanelLeft.height = "800px";
         controlPanelLeft.paddingTop = "100px";
-        controlPanelLeft.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
-        controlPanelLeft.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        controlPanelLeft.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+        controlPanelLeft.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         controlMeshTexture.addControl(controlPanelLeft);
 
         //
         // Add scheme choice slider
-        let schemeChoiceSlider = new GUI.Slider("schemeChoiceSlider");
+        let schemeChoiceSlider = new BABYLON.GUI.Slider("schemeChoiceSlider");
         let schemeChoices = ["f x g", "f x g + c", "f x g + const"];
         Object.assign(schemeChoiceSlider, {
             minimum: 0,
@@ -228,7 +224,7 @@ const createScene = async function () {
         })
         controlPanelLeft.addControl(schemeChoiceSlider);
         // Add scheme choice slider text
-        let schemeSliderText = new GUI.TextBlock("schemeSliderText");
+        let schemeSliderText = new BABYLON.GUI.TextBlock("schemeSliderText");
         Object.assign(schemeSliderText, {
             text: "mult: " + schemeChoices[schemeChoiceSlider.value],
             height: "75px",
@@ -240,7 +236,7 @@ const createScene = async function () {
 
         //
         // Add choice slider
-        let choiceSlider = new GUI.Slider("choiceSlider");
+        let choiceSlider = new BABYLON.GUI.Slider("choiceSlider");
         let choices = ["1. f_A, g_A", "2. f_A, g_A ver2", "3. f_B, g_B", "4. f_C, g_C", "5. f_D, g_D", "6. f_E, g_E", "user defined"]
         Object.assign(choiceSlider, {
             minimum: 0,
@@ -261,7 +257,7 @@ const createScene = async function () {
         });
         controlPanelLeft.addControl(choiceSlider);
         // Add choice slider text
-        let choiceText = new GUI.TextBlock("choiceText");
+        let choiceText = new BABYLON.GUI.TextBlock("choiceText");
         Object.assign(choiceText, {
             text: "f, g: " + choices[choiceSlider.value],
             height: "75px",
@@ -272,7 +268,7 @@ const createScene = async function () {
         controlPanelLeft.addControl(choiceText);
 
         // Add function pair descriptions
-        let functionPairInputF = new GUI.InputText("functionPairInputF");
+        let functionPairInputF = new BABYLON.GUI.InputText("functionPairInputF");
         Object.assign(functionPairInputF, {
             text: "f = r*r*vec3(-sinPhi*cosTheta, cosPhi*cosTheta, 0);",
             width: "300px",
@@ -284,7 +280,7 @@ const createScene = async function () {
         })
         functionPairInputF.isVisible = false;
         controlPanelLeft.addControl(functionPairInputF);
-        let functionPairInputG = new GUI.InputText("functionPairInputG");
+        let functionPairInputG = new BABYLON.GUI.InputText("functionPairInputG");
         Object.assign(functionPairInputG, {
             text: "g = vec3(sinTheta/(cosPhi*cosTheta),0,1);",
             width: "300px",
@@ -296,7 +292,7 @@ const createScene = async function () {
         });
         functionPairInputG.isVisible = false;
         controlPanelLeft.addControl(functionPairInputG);
-        let applyFunctionPair = GUI.Button.CreateSimpleButton("applyFunctionPair", "Apply");
+        let applyFunctionPair = BABYLON.GUI.Button.CreateSimpleButton("applyFunctionPair", "Apply");
         Object.assign(applyFunctionPair, {
             width: "150px",
             height: "75px",
@@ -315,23 +311,30 @@ const createScene = async function () {
         applyFunctionPair.isVisible = false;
         controlPanelLeft.addControl(applyFunctionPair);
 
+        // Generate keyboard
+        let kb = BABYLON.GUI.VirtualKeyboard.CreateDefaultLayout();
+        kb.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+        controlMeshTexture.addControl(kb);
+        kb.connect(controlPanelLeft.getChildByName("functionPairInputF"));
+        kb.connect(controlPanelLeft.getChildByName("functionPairInputG"));
+
 
         //
         //
         // To right panel
         //
         //
-        let controlPanelRight = new GUI.StackPanel();
+        let controlPanelRight = new BABYLON.GUI.StackPanel();
         controlPanelRight.width = "500px";
-        controlPanelRight.height = "1200px";
+        controlPanelRight.height = "800px";
         controlPanelRight.paddingTop = "100px";
-        controlPanelRight.horizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        controlPanelRight.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_CENTER;
+        controlPanelRight.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        controlPanelRight.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_CENTER;
         controlMeshTexture.addControl(controlPanelRight);
 
         //
         // Add iteration slider
-        let iterationSlider = new GUI.Slider("iterationSlider");
+        let iterationSlider = new BABYLON.GUI.Slider("iterationSlider");
         Object.assign(iterationSlider, {
             minimum: 0,
             maximum: 100,
@@ -350,7 +353,7 @@ const createScene = async function () {
         })
         controlPanelRight.addControl(iterationSlider);
         // Add iteration slider text
-        let iterationText = new GUI.TextBlock("iterationText");
+        let iterationText = new BABYLON.GUI.TextBlock("iterationText");
         Object.assign(iterationText, {
             text: "#iterations = " + iterationSlider.value,
             height: "75px",
@@ -363,13 +366,13 @@ const createScene = async function () {
         //
         // Add eps slider
         let epsExp = 1.e5;
-        var epsSlider = new GUI.Slider("epsSlider");
+        var epsSlider = new BABYLON.GUI.Slider("epsSlider");
 
         Object.assign(epsSlider, {
             minimum: 1 / epsExp,
             maximum: 0.01,
             value: 0.01,
-            step: 100 / epsExp,
+            step: 10 / epsExp,
             width: "300px",
             height: sliderHeight,
             paddingTop: "0px",
@@ -384,7 +387,7 @@ const createScene = async function () {
         controlPanelRight.addControl(epsSlider);
 
         // Add eps slider text
-        let epsText = new GUI.TextBlock("epsText");
+        let epsText = new BABYLON.GUI.TextBlock("epsText");
         Object.assign(epsText, {
             text: "eps = " + Math.round(epsSlider.value * epsExp) / epsExp,
             height: "75px",
@@ -396,7 +399,7 @@ const createScene = async function () {
 
         //
         // Add radius slider
-        let radiusSlider = new GUI.Slider("radiusSlider");
+        let radiusSlider = new BABYLON.GUI.Slider("radiusSlider");
         Object.assign(radiusSlider, {
             minimum: 0,
             maximum: 10,
@@ -417,7 +420,7 @@ const createScene = async function () {
         })
         controlPanelRight.addControl(radiusSlider);
         // Add radius slider text
-        let radiusText = new GUI.TextBlock("radiusText");
+        let radiusText = new BABYLON.GUI.TextBlock("radiusText");
         Object.assign(radiusText, {
             text: "radius = " + Math.round(radiusSlider.value * 100) / 100,
             height: "100px",
@@ -428,7 +431,7 @@ const createScene = async function () {
         controlPanelRight.addControl(radiusText);
 
         // Add Julia constant value input field
-        let juliaConstantInput = new GUI.InputText("juliaConstantText");
+        let juliaConstantInput = new BABYLON.GUI.InputText("juliaConstantText");
         Object.assign(juliaConstantInput, {
             text: "-1. 0. 0.",
             width: "150px",
@@ -446,7 +449,7 @@ const createScene = async function () {
             let newConstant = new BABYLON.Vector3(parseFloat(entries[0]), parseFloat(entries[1]), parseFloat(entries[2]));
             shaderMaterial.setVector3("juliaConstant", newConstant);
         })
-        let juliaConstantInputText = new GUI.TextBlock("juliaConstantInputText");
+        let juliaConstantInputText = new BABYLON.GUI.TextBlock("juliaConstantInputText");
         Object.assign(juliaConstantInputText, {
             text: "Julia constant",
             height: "100px",
@@ -475,11 +478,12 @@ const createScene = async function () {
     xrCam.onXRCameraInitializedObservable.add(function () {
         viewPlane.position = xrCam.getFrontPosition(1.5);
         controlMesh.position = xrCam.getFrontPosition(1);
-    })
-    // On xrCam changed
-    xrCam.onViewMatrixChangedObservable.add(function () {
-        viewPlane.position = xrCam.getFrontPosition(1.5);
-        controlMesh.position = xrCam.getFrontPosition(1);
+
+        // On xrCam changed
+        scene.onBeforeRenderObservable.add(function () {
+            viewPlane.position = xrCam.getFrontPosition(1.5);
+            controlMesh.position = xrCam.getFrontPosition(1);
+        });
     })
 
     xr.input.onControllerAddedObservable.add((controller) => {
@@ -523,3 +527,8 @@ createScene().then((scene) => {
 window.addEventListener("resize", function () {
     engine.resize();
 });
+
+
+function w(value) {
+    return console.log(value);
+}
